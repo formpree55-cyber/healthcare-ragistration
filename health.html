@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 🔥 मोबाइल के लिए व्यूपोर्ट 🔥 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Reliable Healthcare | Professional Registration Portal</title>
+    <!-- Font Awesome 6 for healthcare icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Professional Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e8f0fe 0%, #f9fcff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 15px;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* --- प्रोफेशनल नेवबार --- */
+        .navbar {
+            background: linear-gradient(135deg, #0b2f4e 0%, #144d7c 100%);
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 20px rgba(0,40,80,0.25);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+            color: #fff;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .navbar h2 {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #fff, #c7e0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 3px solid #4da8ff;
+            padding-left: 15px;
+        }
+
+        .navbar h2 span {
+            font-size: 0.9rem;
+            display: block;
+            color: #a0c9ff;
+            font-weight: 400;
+            -webkit-text-fill-color: #a0c9ff;
+        }
+
+        .menu {
+            display: flex;
+            gap: 1.8rem;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+            opacity: 0.9;
+        }
+
+        .menu a i {
+            font-size: 1.1rem;
+        }
+
+        .menu a:hover {
+            border-bottom-color: #ffd966;
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+
+        /* --- प्रोफेशनल मेन कंटेनर --- */
+        .container {
+            width: 100%;
+            max-width: 520px;
+            margin: 1.5rem auto;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1.8rem;
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -20px rgba(0, 40, 80, 0.3);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        /* प्रोफेशनल हेडर */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0b2f4e;
+            margin: 0.5rem 0 1.5rem 0;
+            border-bottom: 3px solid #e6f0ff;
+            padding-bottom: 0.8rem;
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, #0b2f4e, #1e5a9b);
+            color: white;
+            padding: 10px;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            width: 2.5rem;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(26,115,232,0.3);
+        }
+
+        /* फॉर्म ग्रिड */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.3rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label i {
+            color: #1a73e8;
+            width: 22px;
+            font-size: 1.2rem;
+        }
+
+        input, select {
+            padding: 15px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 28px;
+            font-size: 1rem;
+            background: #ffffff;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            background: #ffffff;
+            box-shadow: 0 0 0 5px rgba(26,115,232,0.15), inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        input[type="file"] {
+            padding: 12px;
+            background: #f5faff;
+            border-style: dashed;
+            border-color: #1a73e8;
+        }
+
+        /* प्रोफेशनल सबमिट बटन */
+        .btn-submit {
+            background: linear-gradient(135deg, #0b2f4e, #1d66ac);
+            color: white;
+            border: none;
+            padding: 18px 28px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100%;
+            box-shadow: 0 15px 25px -8px #0b2f4ecc;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit i {
+            font-size: 1.3rem;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #144269, #1f78d0);
+            transform: translateY(-3px);
+            box-shadow: 0 25px 35px -8px #0b2f4e;
+        }
+
+        /* डुअल कार्ड रो */
+        .dual-card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.3rem 1.2rem;
+            border: 1px solid rgba(0,100,200,0.1);
+            box-shadow: 0 12px 24px -12px rgba(0,47,92,0.2);
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .info-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0b2f4e;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(26,115,232,0.2);
+            padding-bottom: 0.7rem;
+        }
+
+        .info-card h4 i {
+            color: #1a73e8;
+            font-size: 1.4rem;
+        }
+
+        .info-card ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            list-style: none;
+        }
+
+        .info-card li {
+            color: #1e405e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .info-card li i {
+            color: #0f9d58;
+            font-size: 1rem;
+            width: 22px;
+        }
+
+        .benefits-card {
+            background: linear-gradient(145deg, #ebf7f0, #e0f0e8);
+        }
+
+        /* सक्सेस मैसेज */
+        .success-message {
+            background: #e6f7e6;
+            color: #1e7e34;
+            padding: 1rem;
+            border-radius: 20px;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            border-left: 5px solid #1e7e34;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* फुटर */
+        .footer {
+            margin-top: 2.2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #53718e;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .footer span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer i {
+            color: #1a73e8;
+            width: 20px;
+        }
+
+        /* रिस्पॉन्सिव */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0.8rem 1rem;
+            }
+            .navbar h2 {
+                font-size: 1.1rem;
+            }
+            .menu {
+                gap: 1rem;
+            }
+            .menu a {
+                font-size: 0.8rem;
+            }
+            .container {
+                padding: 1.5rem 1.2rem;
+                margin: 1rem;
+            }
+            .dual-card-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- प्रोफेशनल नेविगेशन बार -->
+<div class="navbar">
+    <div class="logo-area">
+        <i class="fas fa-heartbeat logo-icon"></i>
+        <h2>Reliable Healthcare <span>स्वास्थ्य सेवा भर्ती</span></h2>
+    </div>
+    <div class="menu">
+        <a href="#"><i class="fas fa-home"></i> होम</a>
+        <a href="#register"><i class="fas fa-pen-to-square"></i> रजिस्टर</a>
+        <a href="#benefits"><i class="fas fa-gift"></i> लाभ</a>
+        <a href="#contact"><i class="fas fa-phone-alt"></i> संपर्क</a>
+    </div>
+</div>
+
+<!-- मेन रजिस्ट्रेशन फॉर्म -->
+<div class="container" id="register">
+    <div class="section-title">
+        <i class="fas fa-user-md"></i>
+        <span>उम्मीदवार पंजीकरण</span>
+    </div>
+
+    <!-- यहाँ फॉर्म ओपन हो रहा है - action में GOOGLE SHEET URL डालना है -->
+    <form id="registrationForm" onsubmit="return handleSubmit(event)">
+        <!-- ⚠️ IMPORTANT: नीचे दिए गए action URL को अपनी Google Sheet के लिंक से बदलें -->
+        <!-- Google Form से लिंक कैसे बनाएं नीचे नोट में दिया है -->
+        <input type="hidden" name="formResponse" value="यहाँ आपका Google Form Response ID होगा">
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Candidate Name *</label>
+                <input type="text" name="entry.123456789" placeholder="Rahul" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user-tie"></i>Father/Husband Name</label>
+                <input type="text" name="entry.123456790" placeholder="Father/Husband Name">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-female"></i> Mother Name</label>
+                <input type="text" name="entry.123456791" placeholder="Mother Name">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Date of Birth</label>
+                <input type="date" name="entry.123456792" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Contact Number *</label>
+                <input type="tel" name="entry.123456793" placeholder="10 Contact Number" pattern="[0-9]{10}" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> Adhar Number</label>
+                <input type="text" name="entry.123456794" placeholder="Adhar Card Number" pattern="[0-9]{12}">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-graduation-cap"></i> Qualification</label>
+                <input type="text" name="entry.123456795" placeholder=" Highschool">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-heart"></i> Marital Status</label>
+                <select name="entry.123456796">
+                    <option value="">-- Find --</option>
+                    <option value="Single">Unmarried</option>
+                    <option value="Married">Married</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-rupee-sign"></i> Faimily Income</label>
+                <input type="text" name="entry.123456797" placeholder="Annual Income">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-location-dot"></i> Village name</label>
+                <input type="text" name="entry.123456798" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-map"></i> Panchayat Name</label>
+                <input type="text" name="entry.123456799">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-map-pin"></i> Block Name</label>
+                <input type="text" name="entry.123456800">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-city"></i> Distrit</label>
+                <input type="text" name="entry.123456801" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-cloud-upload-alt"></i> Payment Slip (₹500)</label>
+                <input type="file" name="entry.123456802" accept=".pdf,.jpg,.png">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-check-double"></i> Submmit
+        </button>
+    </form>
+
+    <!-- सक्सेस मैसेज (शुरू में छिपा रहेगा) -->
+    <div id="successMessage" class="success-message" style="display: none;">
+        <i class="fas fa-circle-check"></i>
+        <span>धन्यवाद! आपका पंजीकरण सफल रहा। जल्द ही संपर्क किया जाएगा।</span>
+    </div>
+
+    <!-- दोनों कार्ड एक साथ -->
+    <div class="dual-card-row">
+        <div class="info-card">
+            <h4><i class="fas fa-file-alt"></i> आवश्यक दस्तावेज</h4>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> आधार कार्ड</li>
+                <li><i class="fas fa-check-circle"></i> पैन कार्ड</li>
+                <li><i class="fas fa-check-circle"></i> बैंक पासबुक</li>
+                <li><i class="fas fa-check-circle"></i> ₹500 भुगतान रसीद</li>
+                <li><i class="fas fa-check-circle"></i> 2 फोटो</li>
+            </ul>
+        </div>
+        <div class="info-card benefits-card" id="benefits">
+            <h4><i class="fas fa-gem"></i> नौकरी के लाभ</h4>
+            <ul>
+                <li><i class="fas fa-calendar-check"></i> 15 दिन प्रशिक्षण</li>
+                <li><i class="fas fa-bolt"></i> तुरंत नियुक्ति</li>
+                <li><i class="fas fa-money-bill-wave"></i> वेतन ₹10,000–15,000</li>
+                <li><i class="fas fa-utensils"></i> मुफ्त भोजन + आवास</li>
+                <li><i class="fas fa-chart-line"></i> वार्षिक वेतन वृद्धि</li>
+                <li><i class="fas fa-shield"></i> 100% प्लेसमेंट</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- फुटर -->
+    <div class="footer" id="contact">
+        <span><i class="fas fa-envelope"></i> career@reliablehealthcare.com</span>
+        <span><i class="fas fa-phone-alt"></i> +91 98765 43210</span>
+        <span><i class="fas fa-map-marker-alt"></i> नई दिल्ली - 110001</span>
+        <span>© 2026 Reliable Healthcare. सर्वाधिकार सुरक्षित</span>
+    </div>
+</div>
+
+<!-- प्रोफेशनल फुटर बैज -->
+<div style="text-align:center; margin: 0.5rem 0 2rem; color:#2b4f6e; font-size:0.9rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+    <span><i class="fas fa-shield-alt" style="color:#1a73e8;"></i> ISO 9001:2025 प्रमाणित</span>
+    <span><i class="fas fa-star" style="color:#fbbf24;"></i> 5000+ संतुष्ट उम्मीदवार</span>
+    <span><i class="fas fa-lock" style="color:#1a73e8;"></i> सुरक्षित डेटा</span>
+</div>
+
+<!-- फॉर्म सबमिशन हैंडलिंग स्क्रिप्ट -->
+<script>
+    function handleSubmit(event) {
+        event.preventDefault(); // फॉर्म को डिफॉल्ट सबमिट होने से रोकें
+        
+        // यहाँ आप Google Sheet API का उपयोग कर सकते हैं
+        // या Google Form के एंडपॉइंट पर डेटा भेज सकते हैं
+        
+        // ⚠️ महत्वपूर्ण: Google Sheet से कनेक्ट करने के लिए:
+        // 1. Google Form बनाएं
+        // 2. फॉर्म के HTML में जाकर फॉर्म एंडपॉइंट कॉपी करें
+        // 3. नीचे fetch URL में अपना Google Form एंडपॉइंट डालें
+        
+        /*
+        // Example: Google Form Submit Code
+        const formData = new FormData(event.target);
+        fetch('https://https://docs.google.com/forms/u/0/d/1UbIMOFyt7Mjd7YRnptyii7VyXuDA1levRHp0lXh-feI/previewResponse/formResponse', {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        }).then(() => {
+            document.getElementById('successMessage').style.display = 'flex';
+            event.target.reset();
+        }).catch(error => {
+            alert('कुछ गलत हुआ। कृपया पुनः प्रयास करें।');
+        });
+        */
+        
+        // डेमो के लिए सक्सेस मैसेज दिखा रहे हैं
+        document.getElementById('successMessage').style.display = 'flex';
+        event.target.reset();
+        
+        // 5 सेकंड बाद मैसेज छुपा दें
+        setTimeout(() => {
+            document.getElementById('successMessage').style.display = 'none';
+        }, 5000);
+        
+        return false;
+    }
+</script>
+
+<!-- ⚠️ GOOGLE SHEET से कनेक्ट करने के लिए निर्देश (इसे हटा सकते हैं) -->
+<div style="max-width:520px; margin:0 auto 2rem; padding:1rem; background:#fff3cd; border-radius:20px; font-size:0.9rem; border-left:5px solid #ffc107;">
+    <p style="font-weight:700; margin-bottom:5px;"><i class="fas fa-info-circle"></i> Google Sheet से कनेक्ट करने के लिए:</p>
+    <ol style="padding-left:1.5rem; color:#333;">
+        <li>Google Form बनाएं (सवालों के नाम ऊपर दिए अनुसार रखें)</li>
+        <li>फॉर्म का "View Live Form" खोलें</li>
+        <li>इंस्पेक्ट एलिमेंट (F12) करके फॉर्म का action URL कॉपी करें</li>
+        <li>उस URL को ऊपर fetch वाली लाइन में डालें</li>
+        <li>हर input के name को Google Form के entry ID से मैच करें</li>
+    </ol>
+    <p style="margin-top:5px;"><i class="fas fa-link"></i> या सीधा <a href="https://github.com/levinunnink/html-form-to-google-sheet" target="_blank" style="color:#0b2f4e;">इस तरीके</a> का उपयोग करें</p>
+</div>
+
+</body>
+</html>
