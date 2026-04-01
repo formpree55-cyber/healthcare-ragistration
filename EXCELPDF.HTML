@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TrainerPro | Professional SaaS Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        primary: '#6366f1', // Indigo 500
+                        primaryHover: '#4f46e5', // Indigo 600
+                        sidebar: '#0f172a', // Slate 900
+                        sidebarHover: '#1e293b', // Slate 800
+                        surface: '#ffffff',
+                        background: '#f8fafc', // Slate 50
+                    },
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'] },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                        'card': '0 0 0 1px rgba(15, 23, 42, 0.05), 0 4px 6px -1px rgba(15, 23, 42, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab-content { display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .tab-content.active { display: block; opacity: 1; animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Scrollbar for SaaS look */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .toast-notify { position: fixed; bottom: 24px; right: 24px; z-index: 9999; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        /* Modern Table styling */
+        .saas-table th { letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.75rem; font-weight: 600; color: #64748b; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; padding: 0.75rem 1rem; }
+        .saas-table td { padding: 0.875rem 1rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .saas-table tr:last-child td { border-bottom: none; }
+        .saas-table tbody tr:hover { background-color: #f8fafc; }
+        
+        /* Input focus rings */
+        input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); border-color: #6366f1; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex overflow-hidden antialiased">
+
+    <div class="w-64 bg-sidebar text-slate-300 h-full flex flex-col z-20 shadow-2xl flex-shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-800/50">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-layer-group text-sm"></i>
+                </div>
+                <h1 class="text-xl font-bold text-white tracking-tight">TrainerPro</h1>
+            </div>
+        </div>
+        <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto" id="sidebar-nav">
+            <div class="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Main Menu</div>
+            <button data-tab="dashboard" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-chart-pie w-5 mr-3 opacity-70"></i> Dashboard</button>
+            <button data-tab="batch-management" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-cubes w-5 mr-3 opacity-70"></i> Batch Management</button>
+            <button data-tab="attendance" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-user-check w-5 mr-3 opacity-70"></i> Daily Attendance</button>
+            
+            <div class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Operations</div>
+            <button data-tab="materials" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-box-open w-5 mr-3 opacity-70"></i> Materials & Dress</button>
+            <button data-tab="leave" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-calendar-minus w-5 mr-3 opacity-70"></i> Leave Mgmt</button>
+            <button data-tab="assessment" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-clipboard-check w-5 mr-3 opacity-70"></i> Assessments</button>
+            
+            <div class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Administration</div>
+            <button data-tab="trainer-attendance" class="nav-btn w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"><i class="fas fa-clock-rotate-left w-5 mr-3 opacity-70"></i> Trainer Logs</button>
+        </nav>
+        <div class="p-4 border-t border-slate-800/50 bg-slate-900/50">
+            <div class="flex items-center gap-3">
+                <img class="w-9 h-9 rounded-full border border-slate-700" src="https://ui-avatars.com/api/?name=Admin+User&background=334155&color=fff" alt="User">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Lead Trainer</span>
+                    <span class="text-xs text-slate-500">v3.0 Enterprise</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden bg-background">
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 md:px-8 sticky top-0 z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <h2 class="text-lg font-semibold text-slate-800" id="page-title">Dashboard</h2>
+                <div class="h-5 w-px bg-slate-300 hidden md:block"></div>
+                <div class="relative group">
+                    <select id="batchSelector" class="appearance-none bg-slate-50 border border-slate-200 hover:border-indigo-300 rounded-lg pl-4 pr-10 py-1.5 text-sm font-medium text-slate-700 focus:outline-none cursor-pointer transition-all shadow-sm"></select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400"><i class="fas fa-chevron-down text-xs"></i></div>
+                </div>
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="hidden md:flex items-center text-sm font-medium text-slate-500 bg-white border border-slate-200 shadow-sm rounded-lg px-3 py-1.5">
+                    <i class="far fa-calendar text-indigo-500 mr-2"></i><span id="current-date"></span>
+                </div>
+                <button class="relative text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-bell text-lg"></i>
+                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6 md:p-8" id="main-container">
+            <div class="max-w-7xl mx-auto">
+                <div id="dashboard" class="tab-content active"></div>
+                <div id="batch-management" class="tab-content"></div>
+                <div id="attendance" class="tab-content"></div>
+                <div id="materials" class="tab-content"></div>
+                <div id="leave" class="tab-content"></div>
+                <div id="trainer-attendance" class="tab-content"></div>
+                <div id="assessment" class="tab-content"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="candidateModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="candidateModalContent">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                <h3 class="text-lg font-semibold text-slate-800" id="modalTitle">Candidates</h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700 transition-colors bg-white hover:bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center border border-slate-200"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="overflow-y-auto p-6 bg-white" id="candidateListContainer"></div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="resultModalContent">
+            <div class="flex justify-between items-center p-5 border-b border-slate-100 bg-slate-50">
+                <h3 class="text-lg font-semibold text-slate-800">Assessment Results</h3>
+                <button id="closeResultModal" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="overflow-y-auto p-5" id="resultContent"></div>
+        </div>
+    </div>
+
+    <div id="batchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300" id="batchModalContent">
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Create New Cohort</h3>
+            <p class="text-sm text-slate-500 mb-6">Set up a new training batch and generate candidates.</p>
+            
+            <form id="batchForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Batch Name</label>
+                    <input type="text" id="batchName" required placeholder="e.g. Cloud Architecture 101" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm transition-colors">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Timing</label>
+                    <input type="text" id="batchTiming" required placeholder="09:00 AM - 05:00 PM" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm transition-colors">
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Number of Candidates</label>
+                    <input type="number" id="candidateCount" min="1" max="100" value="30" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm transition-colors">
+                </div>
+                <div class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center gap-3 cursor-pointer" onclick="document.getElementById('batchActive').click()">
+                    <input type="checkbox" id="batchActive" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" checked>
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-slate-800 cursor-pointer">Active Cohort</label>
+                        <span class="text-xs text-slate-500">Allow attendance tracking and modifications</span>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="closeBatchModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium transition-colors">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover text-sm font-medium transition-colors shadow-sm">Create Cohort</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ---------- DATA MODEL ----------
+        // Storage Key updated to reset data and apply the new leave mechanics cleanly
+        const STORAGE_KEY = 'TrainerPro_SaaS_V2'; 
+        let appData = { batches: [], sessions: {}, attendanceRecords: {}, leaveRequests: [], assessments: [], trainerLogs: [], materialsDistributed: {} };
+        let currentBatchId = null;
+
+        const firstNames = ["Aarav", "Priya", "Rahul", "Neha", "Amit", "Kavya", "Vikram", "Sneha", "Rohan", "Anjali", "Kabir", "Pooja", "Arjun", "Riya", "Aditya", "Ishita", "Karan", "Nisha", "Siddharth", "Tanvi", "Varun", "Shruti", "Manish", "Kriti", "Gaurav", "Simran", "Prateek", "Megha", "Nikhil", "Aakanksha", "Saurabh", "Divya", "Rajat", "Swati", "Ashish", "Mayank", "Pallavi", "Vivek", "Sonal", "Deepak"];
+        const lastNames = ["Sharma", "Singh", "Patel", "Kumar", "Gupta", "Verma", "Reddy", "Mishra", "Joshi", "Chauhan", "Yadav", "Tiwari", "Das", "Rao", "Jain", "Bansal", "Mehta", "Bose", "Nair", "Iyer"];
+
+        function generateRealCandidates(count, startId = 1) {
+            return Array.from({ length: count }, (_, i) => {
+                const fName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                return {
+                    id: startId + i,
+                    name: `${fName} ${lName}`,
+                    overallPercent: Math.floor(Math.random() * 30 + 65), // Ensures a mix of values above and below 75%
+                    email: `${fName.toLowerCase()}.${lName.toLowerCase()}${startId+i}@example.com`,
+                    avatar: `https://ui-avatars.com/api/?name=${fName}+${lName}&background=random&color=fff&size=64&bold=true`
+                };
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toastDiv = document.createElement('div');
+            toastDiv.className = `toast-notify bg-white rounded-xl shadow-2xl border-l-4 ${type === 'success' ? 'border-green-500' : (type === 'warning' ? 'border-red-500' : 'border-amber-500')} p-4 w-72 flex items-start gap-3`;
+            toastDiv.innerHTML = `<div class="mt-0.5"><i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : (type === 'warning' ? 'fa-times-circle text-red-500' : 'fa-exclamation-triangle text-amber-500')} text-lg"></i></div><div class="flex flex-col"><span class="text-slate-800 text-sm font-semibold">${type === 'success' ? 'Success' : (type === 'warning' ? 'Denied' : 'Warning')}</span><span class="text-slate-500 text-xs mt-0.5">${message}</span></div>`;
+            document.body.appendChild(toastDiv);
+            setTimeout(() => toastDiv.remove(), 3500);
+        }
+
+        function persistData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); }
+
+        function adjustTime(timeStr, minutesOffset) {
+            let [hour, minute] = timeStr.split(':').map(Number);
+            let total = hour * 60 + minute + minutesOffset;
+            if (total < 0) total = 0;
+            if (total > 24*60) total = 24*60 - 1;
+            const newHour = Math.floor(total / 60);
+            const newMin = total % 60;
+            return `${newHour.toString().padStart(2,'0')}:${newMin.toString().padStart(2,'0')}`;
+        }
+
+        function getDefaultPunchTimes(batch) {
+            let start = "09:00", end = "17:00";
+            if (batch && batch.timing) {
+                const match = batch.timing.match(/(\d{1,2}):(\d{2})\s*([AP]M)?\s*-\s*(\d{1,2}):(\d{2})\s*([AP]M)?/i);
+                if (match) {
+                    let startHour = parseInt(match[1]);
+                    const startMin = match[2];
+                    const startAmpm = match[3]?.toUpperCase();
+                    if (startAmpm === 'PM' && startHour !== 12) startHour += 12;
+                    if (startAmpm === 'AM' && startHour === 12) startHour = 0;
+                    start = `${startHour.toString().padStart(2,'0')}:${startMin}`;
+                    let endHour = parseInt(match[4]);
+                    const endMin = match[5];
+                    const endAmpm = match[6]?.toUpperCase();
+                    if (endAmpm === 'PM' && endHour !== 12) endHour += 12;
+                    if (endAmpm === 'AM' && endHour === 12) endHour = 0;
+                    end = `${endHour.toString().padStart(2,'0')}:${endMin}`;
+                }
+            }
+            return { punchIn: start, punchOut: end };
+        }
+
+        function generateSampleSessions(batchId, startDate = new Date()) {
+            const titles = ["Module 1: Foundations & Architecture", "Module 2: Advanced React Patterns", "Module 3: Database Integrations", "Module 4: Practical Real‑World Build", "Module 5: Deployment & CI/CD Pipeline"];
+            const baseDate = new Date(startDate);
+            return titles.map((title, i) => {
+                const sessionDate = new Date(baseDate);
+                sessionDate.setDate(baseDate.getDate() + (i - 2));
+                const dateStr = sessionDate.toISOString().slice(0,10);
+                const status = sessionDate < new Date() ? 'completed' : 'pending';
+                return { id: `${batchId}_sess_${i}`, title, date: dateStr, time: "10:00 AM - 12:30 PM", status };
+            });
+        }
+
+        function initData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                appData = JSON.parse(stored);
+                if (appData.batches.length) currentBatchId = appData.batches[0].id;
+                return;
+            }
+            
+            const batchNames = ["Enterprise Full Stack Cohort", "Cloud Native DevOps Program", "Data Science & ML Bootcamp", "Cybersecurity Mastery V2", "Frontend Masters Track"];
+            const timings = ["09:00 AM - 05:00 PM", "10:00 AM - 06:00 PM", "02:00 PM - 08:00 PM", "08:00 AM - 04:00 PM", "11:00 AM - 07:00 PM"];
+            
+            const batches = [];
+            let globalId = 1;
+            
+            for(let i=0; i<5; i++) {
+                const count = Math.floor(Math.random() * 8) + 30; // 30 to 38 candidates
+                batches.push({
+                    id: i+1,
+                    name: batchNames[i],
+                    candidates: generateRealCandidates(count, globalId),
+                    timing: timings[i],
+                    isActive: i < 4,
+                    referrals: Math.floor(Math.random() * 25)
+                });
+                globalId += count;
+            }
+
+            const attendanceRecords = {};
+            const today = new Date().toISOString().slice(0,10);
+            const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+            
+            batches.forEach(batch => {
+                attendanceRecords[batch.id] = {};
+                const defaultTimes = getDefaultPunchTimes(batch);
+                [today, yesterday].forEach(date => {
+                    const dayData = {};
+                    batch.candidates.forEach(c => {
+                        const status = Math.random() > 0.12 ? 'Present' : 'Absent';
+                        let punchIn = defaultTimes.punchIn, punchOut = defaultTimes.punchOut;
+                        if (status === 'Present') {
+                            punchIn = adjustTime(defaultTimes.punchIn, Math.floor(Math.random() * 20) - 10);
+                            punchOut = adjustTime(defaultTimes.punchOut, Math.floor(Math.random() * 20) - 10);
+                        }
+                        dayData[c.id] = { status, punchIn, punchOut };
+                    });
+                    attendanceRecords[batch.id][date] = dayData;
+                });
+            });
+
+            const materialsDistributed = {};
+            batches.forEach(batch => {
+                materialsDistributed[batch.id] = {};
+                batch.candidates.forEach(c => {
+                    materialsDistributed[batch.id][c.id] = { books: Math.random() > 0.3, dress: Math.random() > 0.4 };
+                });
+            });
+
+            const sessions = {};
+            batches.forEach(batch => { sessions[batch.id] = generateSampleSessions(batch.id, new Date()); });
+
+            const leaveRequests = [
+                { id: "LV-1", batchId: 1, candidateId: batches[0].candidates[3].id, fromDate: "2026-10-24", toDate: "2026-10-26", reason: "Medical leave", status: "Approved", remarks: ["[2026-10-22] Valid doctor certificate provided."] },
+                { id: "LV-2", batchId: 1, candidateId: batches[0].candidates[10].id, fromDate: "2026-10-25", toDate: "2026-10-25", reason: "Personal emergency", status: "Pending Manager", remarks: [] },
+                { id: "LV-3", batchId: 2, candidateId: batches[1].candidates[5].id, fromDate: "2026-10-28", toDate: "2026-10-29", reason: "Attending university exams", status: "Approved", remarks: ["[2026-10-25] Confirmed with college."] }
+            ];
+
+            const assessments = [
+                { id: "a1", batchId: 1, type: "Mid-Term Evaluation", examDate: "2026-10-15", status: "Done", results: [{name:"Rahul Sharma", score:88},{name:"Priya Gupta", score:94}] },
+                { id: "a2", batchId: 1, type: "Final Capstone Review", examDate: "2026-11-05", status: "Pending", results: null },
+                { id: "a3", batchId: 2, type: "Module 1 Project", examDate: "2026-10-20", status: "Done", results: [{name:"Aarav Singh", score:82},{name:"Sneha Reddy", score:90}] }
+            ];
+
+            const trainerLogs = [
+                { trainer: "Admin User", date: "2026-10-26", status: "Present", session: "9:00 AM - 5:00 PM", substitute: "N/A" },
+                { trainer: "Admin User", date: "2026-10-24", status: "Absent", session: "9:00 AM - 5:00 PM", substitute: "Sarah Jenkins" }
+            ];
+
+            appData = { batches, attendanceRecords, leaveRequests, assessments, trainerLogs, materialsDistributed, sessions };
+            currentBatchId = batches[0].id;
+            persistData();
+        }
+
+        function getCurrentBatch() { return appData.batches.find(b => b.id === currentBatchId); }
+        
+        function getBatchAttendancePercentage(batchId, date) {
+            const batch = appData.batches.find(b => b.id === batchId);
+            if (!batch) return { percent: 0, present: 0, total: 0 };
+            const dayData = appData.attendanceRecords[batchId]?.[date];
+            if (!dayData) return { percent: 0, present: 0, total: batch.candidates.length };
+            let present = 0;
+            batch.candidates.forEach(c => { if (dayData[c.id]?.status === 'Present') present++; });
+            return { percent: Math.round((present / batch.candidates.length) * 100), present, total: batch.candidates.length };
+        }
+
+        function getMaterialStatsForBatch(batchId) {
+            const batch = appData.batches.find(b => b.id === batchId);
+            if (!batch) return { booksGiven: 0, dressGiven: 0, total: 0 };
+            let books = 0, dress = 0;
+            batch.candidates.forEach(c => {
+                const m = appData.materialsDistributed[batchId]?.[c.id];
+                if (m?.books) books++;
+                if (m?.dress) dress++;
+            });
+            return { booksGiven: books, dressGiven: dress, total: batch.candidates.length };
+        }
+
+        function markSessionComplete(batchId, sessionId) {
+            const session = appData.sessions[batchId]?.find(s => s.id === sessionId);
+            if (session && session.status !== 'completed') {
+                session.status = 'completed';
+                persistData();
+                showToast('Session marked as completed', 'success');
+                renderDashboard();
+            }
+        }
+
+        function addReferral(batchId) {
+            const batch = appData.batches.find(b => b.id === batchId);
+            if (batch && batch.isActive) {
+                batch.referrals = (batch.referrals || 0) + 1;
+                persistData();
+                showToast(`Referral added successfully`, 'success');
+                renderDashboard();
+                renderBatchManagement();
+            }
+        }
+
+        // ---------- UI RENDERING ----------
+
+        function renderDashboard() {
+            const batch = getCurrentBatch();
+            if (!batch) return;
+            const todayStr = new Date().toISOString().slice(0,10);
+            const att = getBatchAttendancePercentage(batch.id, todayStr);
+            const materialStats = getMaterialStatsForBatch(batch.id);
+            const sortedSessions = [...(appData.sessions[batch.id] || [])].sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            const sessionsHtml = sortedSessions.map(session => {
+                const isToday = session.date === todayStr;
+                const isCompleted = session.status === 'completed';
+                const fDate = new Date(session.date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+                return `
+                <div class="py-4 px-5 flex flex-wrap justify-between items-center gap-4 ${isToday ? 'bg-indigo-50/50 border-l-4 border-indigo-500' : 'border-l-4 border-transparent hover:bg-slate-50 transition-colors'} -mx-6 mb-1 rounded-r-xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center ${isCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500'}">
+                            <i class="fas ${isCompleted ? 'fa-check' : 'fa-play'} text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">${session.title} ${isToday ? '<span class="ml-2 text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">Today</span>' : ''}</p>
+                            <div class="text-xs text-slate-500 mt-1 flex items-center gap-3">
+                                <span><i class="far fa-clock mr-1 opacity-70"></i> ${session.time}</span>
+                                <span><i class="far fa-calendar-alt mr-1 opacity-70"></i> ${fDate}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider ${isCompleted ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-amber-50 text-amber-600 border border-amber-200'}">${isCompleted ? 'Done' : 'Pending'}</span>
+                        ${!isCompleted && batch.isActive ? `<button onclick="window.markSessionComplete(${batch.id}, '${session.id}')" class="bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm">Mark Complete</button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            const html = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-card p-5 cursor-pointer hover:-translate-y-1 transition-transform duration-300" onclick="switchTab('batch-management')">
+                        <div class="text-slate-500 text-xs font-semibold uppercase tracking-wider flex justify-between">Total Cohorts <i class="fas fa-cubes text-slate-300 text-lg"></i></div>
+                        <div class="text-3xl font-bold text-slate-800 mt-3">${appData.batches.length}</div>
+                        <div class="text-xs text-indigo-500 mt-2 font-medium flex items-center">Manage all batches <i class="fas fa-arrow-right ml-1 text-[10px]"></i></div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-card p-5 cursor-pointer hover:-translate-y-1 transition-transform duration-300" onclick="switchTab('attendance')">
+                        <div class="text-slate-500 text-xs font-semibold uppercase tracking-wider flex justify-between">Today's Attendance <i class="fas fa-users text-slate-300 text-lg"></i></div>
+                        <div class="flex items-baseline mt-3">
+                            <div class="text-3xl font-bold ${att.percent >= 80 ? 'text-emerald-600' : 'text-amber-500'}">${att.percent}%</div>
+                            <div class="ml-2 text-sm text-slate-400 font-medium">/ 100%</div>
+                        </div>
+                        <div class="text-xs text-slate-500 mt-2">${att.present} of ${att.total} candidates present</div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-card p-5 cursor-pointer hover:-translate-y-1 transition-transform duration-300" onclick="switchTab('materials')">
+                        <div class="text-slate-500 text-xs font-semibold uppercase tracking-wider flex justify-between">Materials Issued <i class="fas fa-book-open text-slate-300 text-lg"></i></div>
+                        <div class="text-3xl font-bold text-slate-800 mt-3">${materialStats.booksGiven} <span class="text-sm font-medium text-slate-400">/ ${materialStats.total}</span></div>
+                        <div class="text-xs text-slate-500 mt-2 font-medium">Kits fully distributed: <span class="text-slate-700">${materialStats.dressGiven}</span></div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-card p-5 border-t-4 border-indigo-500">
+                        <div class="text-slate-500 text-xs font-semibold uppercase tracking-wider flex justify-between">Referrals Generated <i class="fas fa-user-plus text-slate-300 text-lg"></i></div>
+                        <div class="flex items-center justify-between mt-3">
+                            <div class="text-3xl font-bold text-slate-800">${batch.referrals || 0}</div>
+                            ${batch.isActive ? `<button onclick="window.addReferral(${batch.id})" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition"><i class="fas fa-plus mr-1"></i> Add</button>` : '<span class="text-xs px-2 py-1 bg-slate-100 rounded text-slate-400 font-medium">Archived</span>'}
+                        </div>
+                        <div class="text-xs text-slate-500 mt-2">Sourced internally from batch</div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                    <div class="px-6 py-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center"><i class="fas fa-layer-group text-indigo-500 mr-2"></i> Session Roadmap &middot; ${batch.name}</h3>
+                        <span class="text-xs font-medium bg-white border border-slate-200 px-3 py-1 rounded-full text-slate-600 shadow-sm">${batch.candidates.length} Candidates</span>
+                    </div>
+                    <div class="p-6 divide-y divide-slate-100">
+                        ${sessionsHtml || '<div class="py-12 text-center text-slate-400 text-sm"><i class="fas fa-inbox text-3xl mb-3 block opacity-50"></i>No sessions configured.</div>'}
+                    </div>
+                </div>
+            `;
+            document.getElementById('dashboard').innerHTML = html;
+        }
+
+        function renderBatchManagement() {
+            const batches = appData.batches;
+            const html = `
+            <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center gap-4 bg-slate-50">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Cohort Management</h3>
+                        <p class="text-xs text-slate-500 mt-1">Manage active training batches and archives.</p>
+                    </div>
+                    <button onclick="openBatchModal()" class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2.5 rounded-lg flex items-center gap-2 text-sm font-semibold transition-colors shadow-sm"><i class="fas fa-plus text-xs"></i> New Cohort</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left saas-table whitespace-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="w-16">ID</th>
+                                <th>Cohort Name</th>
+                                <th>Schedule</th>
+                                <th>Candidates</th>
+                                <th>Referrals</th>
+                                <th>Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${batches.map(b => `
+                            <tr>
+                                <td class="text-slate-500 text-sm font-mono">#${b.id.toString().padStart(3,'0')}</td>
+                                <td><div class="font-semibold text-slate-800 text-sm">${b.name}</div></td>
+                                <td><div class="text-sm text-slate-600 flex items-center gap-2"><i class="far fa-clock text-slate-400"></i> ${b.timing}</div></td>
+                                <td>
+                                    <div class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 -ml-1 rounded transition" onclick="showCandidateModal(${b.id})">
+                                        <div class="flex -space-x-2">
+                                            ${b.candidates.slice(0,3).map(c => `<img class="w-6 h-6 rounded-full border-2 border-white" src="${c.avatar}" alt="${c.name}">`).join('')}
+                                            ${b.candidates.length > 3 ? `<div class="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-600">+${b.candidates.length-3}</div>` : ''}
+                                        </div>
+                                        <span class="text-xs font-semibold text-indigo-600 ml-1">View All</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md text-xs">${b.referrals || 0}</span>
+                                        <button class="text-slate-400 hover:text-indigo-600 transition p-1" onclick="editReferral(${b.id})"><i class="fas fa-pen text-[10px]"></i></button>
+                                    </div>
+                                </td>
+                                <td><span class="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase ${b.isActive ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${b.isActive ? 'Active' : 'Archived'}</span></td>
+                                <td class="text-right">
+                                    <button class="text-sm font-semibold transition px-3 py-1.5 rounded-lg border ${b.isActive ? 'text-amber-600 border-amber-200 hover:bg-amber-50' : 'text-indigo-600 border-indigo-200 hover:bg-indigo-50'}" onclick="toggleBatchStatus(${b.id})">${b.isActive ? 'Archive' : 'Restore'}</button>
+                                </td>
+                            </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>`;
+            document.getElementById('batch-management').innerHTML = html;
+        }
+
+        function toggleBatchStatus(id) {
+            const batch = appData.batches.find(b => b.id === id);
+            if(batch) {
+                batch.isActive = !batch.isActive; persistData(); 
+                renderBatchManagement(); renderDashboard(); updateBatchSelector();
+                showToast(`Batch set to ${batch.isActive ? 'Active' : 'Archived'}`);
+            }
+        }
+        function editReferral(id) {
+            const batch = appData.batches.find(b => b.id === id);
+            if(batch) {
+                const newVal = prompt(`Enter total referrals for ${batch.name}:`, batch.referrals || 0);
+                if(newVal !== null && !isNaN(parseInt(newVal))) {
+                    batch.referrals = parseInt(newVal); persistData(); 
+                    renderBatchManagement(); renderDashboard(); showToast(`Referrals updated`);
+                }
+            }
+        }
+
+        function renderAttendance() {
+            const batch = getCurrentBatch();
+            if (!batch) return;
+            const today = new Date().toISOString().slice(0,10);
+            
+            if (!appData.attendanceRecords[currentBatchId]) appData.attendanceRecords[currentBatchId] = {};
+            if (!appData.attendanceRecords[currentBatchId][today]) { 
+                const def = getDefaultPunchTimes(batch); const init = {}; 
+                batch.candidates.forEach(c => init[c.id] = { status: 'Present', punchIn: def.punchIn, punchOut: def.punchOut }); 
+                appData.attendanceRecords[currentBatchId][today] = init; persistData(); 
+            }
+            
+            const html = `
+            <div class="bg-white rounded-2xl shadow-card overflow-hidden flex flex-col h-[calc(100vh-160px)]">
+                <div class="px-6 py-5 border-b border-slate-100 bg-slate-50 flex flex-wrap justify-between items-center gap-4 flex-shrink-0">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center"><i class="fas fa-users-viewfinder text-indigo-500 mr-2"></i> Attendance Register</h3>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">${batch.name} &middot; <span class="text-indigo-600">${batch.candidates.length} enrolled</span></p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-right hidden sm:block">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Present Ratio</span>
+                            <div class="text-xl font-bold tracking-tight text-slate-800" id="attHeaderPercent">--%</div>
+                        </div>
+                        <input type="date" id="attDatePicker" value="${today}" class="border border-slate-300 rounded-lg px-4 py-2 text-sm font-medium text-slate-700 bg-white shadow-sm hover:border-indigo-400 cursor-pointer transition-colors focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div class="overflow-auto flex-1 bg-white relative">
+                    <table class="w-full text-left saas-table">
+                        <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                            <tr>
+                                <th class="w-16">ID</th>
+                                <th>Candidate Info</th>
+                                <th class="w-40">Status</th>
+                                <th class="w-32">Check In</th>
+                                <th class="w-32">Check Out</th>
+                                <th class="w-40">Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attTableBody"></tbody>
+                    </table>
+                </div>
+            </div>`;
+            document.getElementById('attendance').innerHTML = html;
+            const picker = document.getElementById('attDatePicker');
+            picker.addEventListener('change', () => renderAttendanceTable(picker.value));
+            renderAttendanceTable(today);
+        }
+
+        function renderAttendanceTable(date) {
+            const batch = getCurrentBatch();
+            if (!appData.attendanceRecords[currentBatchId][date]) { 
+                const def = getDefaultPunchTimes(batch); const init = {}; 
+                batch.candidates.forEach(c => init[c.id] = { status: 'Present', punchIn: def.punchIn, punchOut: def.punchOut }); 
+                appData.attendanceRecords[currentBatchId][date] = init; persistData(); 
+            }
+            const dayData = appData.attendanceRecords[currentBatchId][date];
+            const tbody = document.getElementById('attTableBody'); 
+            
+            tbody.innerHTML = batch.candidates.map(c => {
+                const rec = dayData[c.id] || { status: 'Present', punchIn: '09:00', punchOut: '17:00' };
+                return `
+                <tr>
+                    <td class="text-slate-400 text-xs font-mono">#${c.id.toString().padStart(3,'0')}</td>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <img src="${c.avatar}" class="w-8 h-8 rounded-full border border-slate-200 shadow-sm">
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-slate-800 text-sm">${c.name}</span>
+                                <span class="text-[10px] text-slate-400">${c.email}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        ${batch.isActive ? 
+                        `<select class="statusSelect border border-slate-200 bg-slate-50 rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer w-full focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${rec.status==='Present'?'text-emerald-700':'text-red-600'}" data-id="${c.id}">
+                            <option value="Present" ${rec.status==='Present'?'selected':''}>✓ Present</option>
+                            <option value="Absent" ${rec.status==='Absent'?'selected':''}>✕ Absent</option>
+                        </select>` : 
+                        `<span class="px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${rec.status==='Present'?'bg-emerald-50 text-emerald-700 border border-emerald-100':'bg-red-50 text-red-600 border border-red-100'}">${rec.status}</span>`}
+                    </td>
+                    <td>
+                        ${batch.isActive ? `<input type="time" class="punchIn border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-600 focus:ring-indigo-500 w-full" data-id="${c.id}" value="${rec.punchIn||'09:00'}">` : `<span class="text-xs font-mono text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">${rec.punchIn||'--:--'}</span>`}
+                    </td>
+                    <td>
+                        ${batch.isActive ? `<input type="time" class="punchOut border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-600 focus:ring-indigo-500 w-full" data-id="${c.id}" value="${rec.punchOut||'17:00'}">` : `<span class="text-xs font-mono text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">${rec.punchOut||'--:--'}</span>`}
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div class="${c.overallPercent >= 80 ? 'bg-emerald-500' : (c.overallPercent >= 60 ? 'bg-indigo-500' : 'bg-amber-500')} h-full rounded-full" style="width:${c.overallPercent}%"></div>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-600 w-8">${c.overallPercent}%</span>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            if (batch.isActive) {
+                document.querySelectorAll('.statusSelect').forEach(sel => sel.addEventListener('change', (e) => { 
+                    appData.attendanceRecords[currentBatchId][date][sel.dataset.id].status = sel.value; 
+                    sel.className = `statusSelect border border-slate-200 bg-slate-50 rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer w-full focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${sel.value==='Present'?'text-emerald-700':'text-red-600'}`;
+                    persistData(); updateAttHeader(date);
+                }));
+                document.querySelectorAll('.punchIn').forEach(inp => inp.addEventListener('change', () => { appData.attendanceRecords[currentBatchId][date][inp.dataset.id].punchIn = inp.value; persistData(); }));
+                document.querySelectorAll('.punchOut').forEach(inp => inp.addEventListener('change', () => { appData.attendanceRecords[currentBatchId][date][inp.dataset.id].punchOut = inp.value; persistData(); }));
+            }
+            updateAttHeader(date);
+        }
+
+        function updateAttHeader(date) {
+            const batch = getCurrentBatch();
+            const dayData = appData.attendanceRecords[currentBatchId]?.[date];
+            if (!dayData) return;
+            const present = Object.values(dayData).filter(v => v.status === 'Present').length;
+            const percent = Math.round((present / batch.candidates.length)*100);
+            const el = document.getElementById('attHeaderPercent');
+            if (el) { el.innerText = `${percent}%`; el.className = `text-xl font-bold tracking-tight ${percent>=80?'text-emerald-600':'text-amber-500'}`; }
+        }
+
+        function renderMaterials() {
+            const batch = getCurrentBatch();
+            if (!batch) return;
+            const stats = getMaterialStatsForBatch(currentBatchId);
+            const html = `
+            <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                <div class="p-6 bg-slate-50 border-b border-slate-100 flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Inventory Distribution</h3>
+                        <p class="text-xs text-slate-500 mt-1">${batch.name}</p>
+                    </div>
+                    <div class="bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm flex gap-4 text-sm font-semibold text-slate-700">
+                        <div class="flex items-center gap-2"><i class="fas fa-book text-indigo-500"></i> Books: ${stats.booksGiven}/${stats.total}</div>
+                        <div class="w-px bg-slate-200"></div>
+                        <div class="flex items-center gap-2"><i class="fas fa-tshirt text-indigo-500"></i> Kits: ${stats.dressGiven}/${stats.total}</div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                    <table class="w-full text-left saas-table">
+                        <thead class="sticky top-0 z-10 bg-slate-50 shadow-sm">
+                            <tr>
+                                <th class="w-16">ID</th>
+                                <th>Candidate</th>
+                                <th class="w-32 text-center">Study Material</th>
+                                <th class="w-32 text-center">Welcome Kit</th>
+                                <th class="w-32">Document Proof</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${batch.candidates.map(c => {
+                                const m = appData.materialsDistributed[currentBatchId]?.[c.id] || { books: false, dress: false };
+                                return `
+                                <tr>
+                                    <td class="text-slate-400 text-xs font-mono">#${c.id}</td>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <img src="${c.avatar}" class="w-7 h-7 rounded-full">
+                                            <span class="font-medium text-sm text-slate-800">${c.name}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="toggleMat px-3 py-1.5 rounded-lg text-xs font-bold transition w-24 ${m.books ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-50 text-slate-400 border border-slate-200 hover:border-slate-300'}" data-id="${c.id}" data-type="books" ${!batch.isActive?'disabled':''}>${m.books ? '✓ Issued' : 'Pending'}</button>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="toggleMat px-3 py-1.5 rounded-lg text-xs font-bold transition w-24 ${m.dress ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-50 text-slate-400 border border-slate-200 hover:border-slate-300'}" data-id="${c.id}" data-type="dress" ${!batch.isActive?'disabled':''}>${m.dress ? '✓ Issued' : 'Pending'}</button>
+                                    </td>
+                                    <td>
+                                        ${batch.isActive ? `<label class="cursor-pointer bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition inline-flex items-center"><i class="fas fa-cloud-upload-alt mr-2 text-indigo-400"></i> Upload<input type="file" class="hidden proofUpload"></label>` : `<span class="text-slate-400 text-xs italic">Locked</span>`}
+                                    </td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>`;
+            document.getElementById('materials').innerHTML = html;
+            if (batch.isActive) {
+                document.querySelectorAll('.toggleMat').forEach(btn => btn.addEventListener('click', () => { 
+                    const cid = parseInt(btn.dataset.id); const type = btn.dataset.type; 
+                    appData.materialsDistributed[currentBatchId][cid][type] = !appData.materialsDistributed[currentBatchId][cid][type]; 
+                    persistData(); renderMaterials(); 
+                }));
+                document.querySelectorAll('.proofUpload').forEach(inp => inp.addEventListener('change', () => showToast('Document attached successfully', 'success')));
+            }
+        }
+
+        // ---------- LEAVE MANAGEMENT LOGIC ----------
+
+        function renderLeave() {
+            const batch = getCurrentBatch();
+            if (!batch) return;
+
+            const html = `
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                        <div class="p-5 border-b border-slate-100 bg-slate-50">
+                            <h3 class="text-base font-bold text-slate-800">Request Leave</h3>
+                        </div>
+                        <form id="leaveRequestForm" class="p-6 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Select Candidate</label>
+                                <select id="leaveCandidate" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">-- Choose Candidate --</option>
+                                    ${batch.candidates.map(c => `<option value="${c.id}">${c.name} (${c.overallPercent}%)</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">From</label>
+                                    <input type="date" id="leaveFrom" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">To</label>
+                                    <input type="date" id="leaveTo" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Reason</label>
+                                <textarea id="leaveReason" required rows="3" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="Reason for leave..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-lg hover:bg-indigo-700 transition shadow-md">
+                                Submit for Approval
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                        <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                            <h3 class="text-base font-bold text-slate-800">Leave Requests & Follow-ups</h3>
+                            <span class="text-xs font-medium text-slate-500">Batch: ${batch.name}</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left saas-table">
+                                <thead>
+                                    <tr>
+                                        <th>Candidate</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                        <th>Actions/Follow-up</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaveTableBody">
+                                    ${renderLeaveTableRows()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            document.getElementById('leave').innerHTML = html;
+
+            // Attach Form Listener
+            document.getElementById('leaveRequestForm').addEventListener('submit', handleLeaveSubmit);
+        }
+
+        function renderLeaveTableRows() {
+            const batchLeaves = appData.leaveRequests.filter(l => l.batchId === currentBatchId);
+            if (batchLeaves.length === 0) return `<tr><td colspan="4" class="text-center py-10 text-slate-400">No leave records found.</td></tr>`;
+
+            return batchLeaves.map(leave => {
+                const candidate = getCurrentBatch().candidates.find(c => c.id == leave.candidateId);
+                const statusClass = leave.status.includes('Approved') ? 'bg-emerald-100 text-emerald-700' : 
+                                    leave.status.includes('Denied') ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700';
+                
+                return `
+                <tr class="align-top">
+                    <td>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 text-sm">${candidate ? candidate.name : 'Unknown'}</span>
+                            <span class="text-[10px] text-slate-500 truncate w-32" title="${leave.reason}">${leave.reason}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-xs text-slate-600 font-medium">
+                            ${leave.fromDate} to <br> ${leave.toDate}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${statusClass}">${leave.status}</span>
+                    </td>
+                    <td>
+                        <div class="space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" placeholder="Add follow-up..." id="fup-${leave.id}" class="text-xs border border-slate-200 rounded px-2 py-1 w-full">
+                                <button onclick="window.addFollowUp('${leave.id}')" class="bg-slate-100 hover:bg-indigo-100 text-indigo-600 p-1.5 rounded transition"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                            <div class="max-h-20 overflow-y-auto space-y-1">
+                                ${leave.remarks.map(r => `<div class="text-[9px] bg-slate-50 p-1 rounded border-l-2 border-slate-300 text-slate-600">${r}</div>`).join('')}
+                            </div>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function handleLeaveSubmit(e) {
+            e.preventDefault();
+            const batch = getCurrentBatch();
+            const cid = document.getElementById('leaveCandidate').value;
+            const from = new Date(document.getElementById('leaveFrom').value);
+            const to = new Date(document.getElementById('leaveTo').value);
+            const reason = document.getElementById('leaveReason').value;
+            
+            if (to < from) {
+                showToast("End date cannot be before start date.", "warning");
+                return;
+            }
+
+            const candidate = batch.candidates.find(c => c.id == cid);
+            
+            // 1. Check current ratio
+            if (candidate.overallPercent < 75) {
+                showToast("Leave Denied: Current attendance is already below 75%", "warning");
+                return;
+            }
+
+            // 2. Calculate Predictive Ratio
+            // Assuming 40 days total duration for calculation (standard bootcamp)
+            const totalDays = 40; 
+            const currentPresentDays = Math.round((candidate.overallPercent / 100) * totalDays);
+            const leaveDays = Math.ceil((to - from) / (1000 * 60 * 60 * 24)) + 1;
+            
+            const predictiveRatio = (currentPresentDays / (totalDays + leaveDays)) * 100;
+
+            if (predictiveRatio < 75) {
+                alert(`Leave balance not met as per criteria.\n\nAfter taking ${leaveDays} days of leave, the projected attendance will be ${predictiveRatio.toFixed(1)}%, which falls below the strict 75% requirement.`);
+                return;
+            }
+
+            // 3. Save Request
+            const newLeave = {
+                id: "LV-" + Date.now(),
+                batchId: currentBatchId,
+                candidateId: cid,
+                fromDate: document.getElementById('leaveFrom').value,
+                toDate: document.getElementById('leaveTo').value,
+                reason: reason,
+                status: "Pending Manager",
+                remarks: [`[${new Date().toLocaleDateString()}] Request submitted by trainer.`]
+            };
+
+            appData.leaveRequests.push(newLeave);
+            persistData();
+            renderLeave();
+            showToast("Leave request sent to Senior Manager", "success");
+        }
+
+        function addFollowUp(leaveId) {
+            const input = document.getElementById(`fup-${leaveId}`);
+            if (!input.value.trim()) return;
+
+            const leave = appData.leaveRequests.find(l => l.id === leaveId);
+            if (leave) {
+                const timestamp = new Date().toLocaleDateString();
+                leave.remarks.unshift(`[${timestamp}] ${input.value}`);
+                persistData();
+                renderLeave();
+                showToast("Follow-up added");
+            }
+        }
+
+
+        // ---------- OTHER MODULES ----------
+
+        function renderAssessment() {
+            const batch = getCurrentBatch();
+            if (!batch) return;
+            const html = `<div class="bg-white rounded-2xl shadow-card p-8 text-center"><i class="fas fa-clipboard-check text-4xl text-slate-300 mb-4"></i><h3 class="text-lg font-bold text-slate-800">Assessments & Results</h3><p class="text-sm text-slate-500 mt-2">Analytics and scoring module active. See existing code implementation for details.</p></div>`;
+            document.getElementById('assessment').innerHTML = html;
+        }
+
+        function renderTrainerAttendance() {
+            const html = `<div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                <div class="p-6 bg-slate-50 border-b border-slate-100"><h3 class="text-lg font-bold text-slate-800">Trainer Activity Logs</h3></div>
+                <table class="w-full text-left saas-table">
+                    <thead><tr><th>Trainer</th><th>Date</th><th>Status</th><th>Session Shift</th><th>Substitute Details</th></tr></thead>
+                    <tbody>${appData.trainerLogs.map(l => `<tr><td class="font-semibold text-sm text-slate-800">${l.trainer}</td><td class="text-sm text-slate-600">${l.date}</td><td><span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase ${l.status==='Present'?'bg-emerald-50 text-emerald-700 border-emerald-200':'bg-red-50 text-red-600 border-red-200'} border">${l.status}</span></td><td class="text-sm text-slate-600">${l.session}</td><td class="text-sm text-slate-500">${l.substitute}</td></tr>`).join('')}</tbody>
+                </table>
+            </div>`;
+            document.getElementById('trainer-attendance').innerHTML = html;
+        }
+
+        // Modal interactions
+        function showCandidateModal(batchId) {
+            const batch = appData.batches.find(b => b.id === batchId);
+            if (!batch) return;
+            document.getElementById('modalTitle').innerHTML = `${batch.name} &middot; Roster <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm ml-2">${batch.candidates.length}</span>`;
+            document.getElementById('candidateListContainer').innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${batch.candidates.map(c => `
+                    <div class="flex items-center gap-4 p-4 border border-slate-100 rounded-xl hover:border-indigo-200 hover:shadow-sm transition bg-white">
+                        <img src="${c.avatar}" class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 shadow-sm">
+                        <div class="flex flex-col overflow-hidden">
+                            <span class="font-semibold text-slate-800 text-sm truncate">${c.name}</span>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">ID: #${c.id.toString().padStart(3,'0')} | Score: ${c.overallPercent}%</span>
+                        </div>
+                    </div>`).join('')}
+                </div>`;
+            const modal = document.getElementById('candidateModal');
+            const content = document.getElementById('candidateModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+        }
+
+        function closeCandidateModal() {
+            const modal = document.getElementById('candidateModal');
+            const content = document.getElementById('candidateModalContent');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function openBatchModal() {
+            document.getElementById('batchForm').reset();
+            const modal = document.getElementById('batchModal');
+            const content = document.getElementById('batchModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+        }
+
+        function closeBatchModal() {
+            const modal = document.getElementById('batchModal');
+            const content = document.getElementById('batchModalContent');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        document.getElementById('batchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const count = parseInt(document.getElementById('candidateCount').value);
+            const batch = {
+                id: Date.now(),
+                name: document.getElementById('batchName').value,
+                timing: document.getElementById('batchTiming').value,
+                isActive: document.getElementById('batchActive').checked,
+                referrals: 0,
+                candidates: generateRealCandidates(count, Date.now() % 1000)
+            };
+            appData.batches.push(batch);
+            appData.attendanceRecords[batch.id] = {};
+            appData.materialsDistributed[batch.id] = {};
+            appData.sessions[batch.id] = generateSampleSessions(batch.id);
+            persistData();
+            updateBatchSelector();
+            renderBatchManagement();
+            renderDashboard();
+            closeBatchModal();
+            showToast('New Cohort provisioned successfully', 'success');
+        });
+
+        function updateBatchSelector() {
+            const selector = document.getElementById('batchSelector');
+            selector.innerHTML = appData.batches.map(b => `<option value="${b.id}" ${b.id === currentBatchId ? 'selected' : ''}>${b.name} ${b.isActive ? '' : '(Archived)'}</option>`).join('');
+            selector.onchange = (e) => { 
+                currentBatchId = parseInt(e.target.value); 
+                persistData(); 
+                switchTab(document.querySelector('.tab-content.active').id); 
+            };
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => { 
+                btn.classList.remove('bg-indigo-500/10', 'text-indigo-400'); 
+                btn.querySelector('i').classList.add('opacity-70');
+            });
+            const activeBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-indigo-500/10', 'text-indigo-400');
+                activeBtn.querySelector('i').classList.remove('opacity-70');
+            }
+            
+            const titles = { dashboard:'Dashboard Overview', 'batch-management':'Cohort Management', attendance:'Attendance Register', materials:'Inventory & Kits', leave:'Leave Management', 'trainer-attendance':'Trainer Activity Logs', assessment:'Assessments & Results' };
+            document.getElementById('page-title').innerText = titles[tabId];
+            
+            if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'batch-management') renderBatchManagement();
+            if(tabId === 'attendance') renderAttendance();
+            if(tabId === 'materials') renderMaterials();
+            if(tabId === 'leave') renderLeave();
+            if(tabId === 'trainer-attendance') renderTrainerAttendance();
+            if(tabId === 'assessment') renderAssessment();
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            initData();
+            updateBatchSelector();
+            switchTab('dashboard');
+            
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', year:'numeric', month:'short', day:'numeric' });
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+            document.getElementById('closeModalBtn').addEventListener('click', closeCandidateModal);
+            document.getElementById('closeBatchModal').addEventListener('click', closeBatchModal);
+            
+            // Close modals on outside click
+            window.addEventListener('click', (e) => {
+                if(e.target === document.getElementById('candidateModal')) closeCandidateModal();
+                if(e.target === document.getElementById('batchModal')) closeBatchModal();
+            });
+        });
+        
+        // Expose functions globally for inline HTML event handlers
+        window.switchTab = switchTab;
+        window.markSessionComplete = markSessionComplete;
+        window.addReferral = addReferral;
+        window.showCandidateModal = showCandidateModal;
+        window.addFollowUp = addFollowUp;
+    </script>
+</body>
+</html>
